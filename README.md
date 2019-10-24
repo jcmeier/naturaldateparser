@@ -13,4 +13,4 @@ The API methods return an time object:
 ```go
     p := CreateNaturalDateParser()
     res, err := p.Parse("10 hours ago")
-``
+```
