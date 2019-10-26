@@ -13,6 +13,34 @@ func equalIgnoreSeconds(a time.Time, b time.Time) bool {
 		a.Year() == b.Year()
 }
 
+func TestParseSecond(t *testing.T) {
+	p := CreateNaturalDateParser()
+	res, err := p.Parse("1 second ago")
+	if err != nil {
+		t.Error(err)
+	}
+
+	expected := time.Now().Add(time.Second * -1)
+
+	if !(equalIgnoreSeconds(res, expected) && res.Second() == expected.Second()) {
+		t.Error("Dates are not equal")
+	}
+}
+
+func TestParseSeconds(t *testing.T) {
+	p := CreateNaturalDateParser()
+	res, err := p.Parse("2 seconds ago")
+	if err != nil {
+		t.Error(err)
+	}
+
+	expected := time.Now().Add(time.Second * -2)
+
+	if !(equalIgnoreSeconds(res, expected) && res.Second() == expected.Second()) {
+		t.Error("Dates are not equal")
+	}
+}
+
 func TestParseHour(t *testing.T) {
 	p := CreateNaturalDateParser()
 	res, err := p.Parse("1 hour ago")

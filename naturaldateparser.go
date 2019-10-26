@@ -10,6 +10,7 @@ import (
 )
 
 type NaturalDateParser struct {
+	secondRegex *regexp.Regexp
 	minuteRegex *regexp.Regexp
 	hourRegex   *regexp.Regexp
 	dayRegex    *regexp.Regexp
@@ -18,6 +19,11 @@ type NaturalDateParser struct {
 }
 
 func CreateNaturalDateParser() *NaturalDateParser {
+	secondRegex, err := regexp.Compile("(\\d\\d*) seconds? ago")
+	if err != nil {
+		log.WithError(err).Panic("Second regex does not compile")
+	}
+
 	minuteRegex, err := regexp.Compile("(\\d\\d*) minutes? ago")
 	if err != nil {
 		log.WithError(err).Panic("Minute regex does not compile")
@@ -44,6 +50,7 @@ func CreateNaturalDateParser() *NaturalDateParser {
 	}
 
 	return &NaturalDateParser{
+		secondRegex: secondRegex,
 		minuteRegex: minuteRegex,
 		hourRegex:   hourRegex,
 		dayRegex:    dayRegex,
@@ -53,6 +60,18 @@ func CreateNaturalDateParser() *NaturalDateParser {
 }
 
 func (p *NaturalDateParser) Parse(naturaldate string) (time.Time, error) {
+	secondMatch := p.secondRegex.FindStringSubmatch(naturaldate)
+	if secondMatch != nil {
+		minutes, err := strconv.Atoi(secondMatch[1])
+
+		if err != nil {
+			return time.Now(), err
+		}
+
+		return time.Now().Add(time.Second * time.Duration(minutes) * -1), nil
+
+	}
+
 	minuteMatch := p.minuteRegex.FindStringSubmatch(naturaldate)
 	if minuteMatch != nil {
 		minutes, err := strconv.Atoi(minuteMatch[1])
