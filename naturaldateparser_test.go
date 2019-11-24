@@ -107,6 +107,19 @@ func TestParseDay(t *testing.T) {
 	}
 }
 
+func TestParseYesterday(t *testing.T) {
+	p := CreateNaturalDateParser()
+	res, err := p.Parse("yesterday")
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !equalIgnoreSeconds(res, time.Now().Add(time.Hour*24*-1)) {
+		t.Error("Dates are not equal")
+	}
+}
+
 func TestParseDays(t *testing.T) {
 	p := CreateNaturalDateParser()
 	res, err := p.Parse("2 days ago")

@@ -99,6 +99,10 @@ func (p *NaturalDateParser) Parse(naturaldate string) (time.Time, error) {
 		return time.Now(), nil
 	}
 
+	if strings.Contains(naturaldate, "yesterday") {
+		return time.Now().Add(time.Hour * -24), nil
+	}
+
 	dayMatch := p.dayRegex.FindStringSubmatch(naturaldate)
 	if dayMatch != nil {
 		days, err := strconv.Atoi(dayMatch[1])
